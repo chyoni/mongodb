@@ -94,7 +94,7 @@ blogRouter.patch('/:blogId/live', async (req, res) => {
   }
 });
 
-// Get all comments by blog id
+// Create comment by blog id
 blogRouter.post('/:blogId/comments', async (req, res) => {
   try {
     const { blogId } = req.params;
