@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Blog from '../models/blog';
 import User from '../models/user';
+import Comment from '../models/comment';
 import mongoose from 'mongoose';
 
 export const blogRouter = Router();
@@ -90,5 +91,32 @@ blogRouter.patch('/:blogId/live', async (req, res) => {
   } catch (e: any) {
     console.log(e);
     res.status(500).send({ error: e.message });
+  }
+});
+
+// Get all comments by blog id
+blogRouter.post('/:blogId/comments', async (req, res) => {
+  try {
+    const { blogId } = req.params;
+    if (!mongoose.isValidObjectId(blogId))
+      return res.status(400).send({ error: 'Invalid blog id' });
+    const { content, userId } = req.body;
+    if (!mongoose.isValidObjectId(userId))
+      return res.status(400).send({ error: 'Invalid user id' });
+
+    if (!content)
+      return res.status(400).send({ error: 'content must be required' });
+    const blog = await Blog.findOne({ _id: blogId });
+    const user = await User.findOne({ _id: userId });
+
+    if (!blog || !user)
+      return res.status(400).send({ error: 'User or Blog does not exist' });
+    if (!blog.isLive)
+      return res.status(400).send({ error: 'Blog is not available' });
+
+    const comment = new Comment({ content, user, blog });
+    return res.status(201).send({ comment });
+  } catch (e: any) {
+    return res.status(500).send({ error: e.message });
   }
 });
