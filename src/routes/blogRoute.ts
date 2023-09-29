@@ -7,6 +7,8 @@ export const blogRouter = Router();
 
 blogRouter.get('/', async (req, res) => {
   try {
+    const blogs = await Blog.find();
+    return res.status(200).send({ blogs });
   } catch (e: any) {
     console.log(e);
     res.status(500).send({ error: e.message });
@@ -38,6 +40,12 @@ blogRouter.post('/', async (req, res) => {
 
 blogRouter.get('/:blogId', async (req, res) => {
   try {
+    const { blogId } = req.params;
+    if (!mongoose.isValidObjectId(blogId))
+      return res.status(400).send({ error: 'Invalid blog id' });
+
+    const blog = await Blog.findOne({ _id: blogId });
+    return res.status(200).send({ blog });
   } catch (e: any) {
     console.log(e);
     res.status(500).send({ error: e.message });
@@ -46,6 +54,12 @@ blogRouter.get('/:blogId', async (req, res) => {
 
 blogRouter.put('/:blogId', async (req, res) => {
   try {
+    const { blogId } = req.params;
+    if (!mongoose.isValidObjectId(blogId))
+      return res.status(400).send({ error: 'Invalid blog id' });
+
+    const blog = await Blog.findByIdAndUpdate(blogId, req.body, { new: true });
+    return res.status(200).send({ blog });
   } catch (e: any) {
     console.log(e);
     res.status(500).send({ error: e.message });
@@ -54,6 +68,20 @@ blogRouter.put('/:blogId', async (req, res) => {
 
 blogRouter.patch('/:blogId/live', async (req, res) => {
   try {
+    const { blogId } = req.params;
+    if (!mongoose.isValidObjectId(blogId))
+      return res.status(400).send({ error: 'Invalid blog id' });
+
+    const { isLive } = req.body;
+    if (typeof isLive !== 'boolean')
+      return res.status(400).send({ error: 'isLive must be a boolean value' });
+
+    const blog = await Blog.findByIdAndUpdate(
+      blogId,
+      { isLive },
+      { new: true }
+    );
+    return res.status(200).send({ blog });
   } catch (e: any) {
     console.log(e);
     res.status(500).send({ error: e.message });
