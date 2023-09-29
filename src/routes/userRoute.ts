@@ -4,6 +4,7 @@ import User from '../models/user';
 
 export const userRouter = Router();
 
+// Get users
 userRouter.get('/', async function (req, res) {
   try {
     const users = await User.find();
@@ -14,6 +15,7 @@ userRouter.get('/', async function (req, res) {
   }
 });
 
+// Create user
 userRouter.post('/', async function (req, res) {
   try {
     const { username, name } = req.body;
@@ -34,6 +36,7 @@ userRouter.post('/', async function (req, res) {
   }
 });
 
+// Get user
 userRouter.get('/:userId', async (req, res) => {
   const { userId } = req.params;
   if (!mongoose.isValidObjectId(userId))
@@ -48,6 +51,7 @@ userRouter.get('/:userId', async (req, res) => {
   }
 });
 
+// Delete user
 userRouter.delete('/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -62,6 +66,7 @@ userRouter.delete('/:userId', async (req, res) => {
   }
 });
 
+// Update user
 userRouter.put('/:userId', async (req, res) => {
   try {
     const { userId } = req.params;

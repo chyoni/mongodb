@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 export const blogRouter = Router();
 
+// Get blogs
 blogRouter.get('/', async (req, res) => {
   try {
     const blogs = await Blog.find();
@@ -15,6 +16,7 @@ blogRouter.get('/', async (req, res) => {
   }
 });
 
+// Create blog
 blogRouter.post('/', async (req, res) => {
   try {
     const { title, content, isLive, userId } = req.body;
@@ -38,6 +40,7 @@ blogRouter.post('/', async (req, res) => {
   }
 });
 
+// Get blog
 blogRouter.get('/:blogId', async (req, res) => {
   try {
     const { blogId } = req.params;
@@ -52,6 +55,7 @@ blogRouter.get('/:blogId', async (req, res) => {
   }
 });
 
+// Update blog
 blogRouter.put('/:blogId', async (req, res) => {
   try {
     const { blogId } = req.params;
@@ -66,6 +70,7 @@ blogRouter.put('/:blogId', async (req, res) => {
   }
 });
 
+// Toggle isLive value of blog
 blogRouter.patch('/:blogId/live', async (req, res) => {
   try {
     const { blogId } = req.params;
