@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import Blog from '../models/blog';
-import User from '../models/user';
+import Blog, { IBlog } from '../models/blog';
+import User, { IUser } from '../models/user';
 import Comment from '../models/comment';
 import mongoose from 'mongoose';
 
@@ -106,8 +106,11 @@ blogRouter.post('/:blogId/comments', async (req, res) => {
 
     if (!content)
       return res.status(400).send({ error: 'content must be required' });
-    const blog = await Blog.findOne({ _id: blogId });
-    const user = await User.findOne({ _id: userId });
+
+    const [blog, user] = await Promise.all([
+      Blog.findOne({ _id: blogId }),
+      User.findOne({ _id: userId }),
+    ]);
 
     if (!blog || !user)
       return res.status(400).send({ error: 'User or Blog does not exist' });
