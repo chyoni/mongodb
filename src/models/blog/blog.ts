@@ -1,10 +1,13 @@
 import { Schema, model, Types } from 'mongoose';
-import { IUser } from './user';
+import { IUser } from '../user/user';
+import { IComment } from '../comment/comment';
 
 export interface IBlog {
+  _id: string;
   title: string;
   content: string;
   isLive: boolean;
+  comments: IComment;
   user: IUser;
 }
 

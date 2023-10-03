@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import Blog, { IBlog } from '../models/blog';
-import User, { IUser } from '../models/user';
-import Comment from '../models/comment';
+import { Blog, Comment, User } from '../../models';
 import mongoose from 'mongoose';
 
 export const blogRouter = Router();
@@ -118,8 +116,23 @@ blogRouter.post('/:blogId/comments', async (req, res) => {
       return res.status(400).send({ error: 'Blog is not available' });
 
     const comment = new Comment({ content, user, blog });
+    await comment.save();
     return res.status(201).send({ comment });
   } catch (e: any) {
+    return res.status(500).send({ error: e.message });
+  }
+});
+
+blogRouter.get('/:blogId/comments', async (req, res) => {
+  try {
+    const { blogId } = req.params;
+    if (!mongoose.isValidObjectId(blogId))
+      return res.status(400).send({ error: 'Invalid blog id' });
+
+    const comments = await Comment.find({ blog: blogId });
+    return res.status(200).send({ comments });
+  } catch (e: any) {
+    console.log(e);
     return res.status(500).send({ error: e.message });
   }
 });

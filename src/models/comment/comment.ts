@@ -1,8 +1,9 @@
 import { Schema, model, Types } from 'mongoose';
-import { IUser } from './user';
-import { IBlog } from './blog';
+import { IUser } from '../user/user';
+import { IBlog } from '../blog/blog';
 
 export interface IComment {
+  _id: string;
   content: string;
   user: IUser;
   blog: IBlog;

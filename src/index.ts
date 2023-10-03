@@ -1,7 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import { userRouter } from './routes/userRoute';
-import { blogRouter } from './routes/blogRoute';
+import { userRouter, blogRouter } from './routes';
 const app = express();
 
 const MONGO_URI =
