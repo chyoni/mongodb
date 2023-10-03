@@ -9,7 +9,7 @@ export interface IComment {
   blog: IBlog;
 }
 
-const commentSchema = new Schema<IComment>(
+export const commentSchema = new Schema<IComment>(
   {
     content: { type: String, required: true },
     user: { type: Types.ObjectId, required: true, ref: 'user' },
