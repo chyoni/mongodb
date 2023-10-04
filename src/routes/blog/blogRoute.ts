@@ -7,10 +7,7 @@ export const blogRouter = Router();
 // Get blogs
 blogRouter.get('/', async (req, res) => {
   try {
-    const blogs = await Blog.find().populate([
-      { path: 'user' },
-      { path: 'comments' },
-    ]);
+    const blogs = await Blog.find();
     return res.status(200).send({ blogs });
   } catch (e: any) {
     console.log(e);
@@ -142,4 +139,23 @@ blogRouter.get('/:blogId/comments', async (req, res) => {
     console.log(e);
     return res.status(500).send({ error: e.message });
   }
+});
+
+blogRouter.patch('/:blogId/comments/:commentId', async (req, res) => {
+  const { commentId } = req.params;
+  const { content } = req.body;
+  if (!mongoose.isValidObjectId(commentId))
+    return res.status(400).send({ error: 'Invalid comment id' });
+  if (typeof content !== 'string')
+    return res.status(400).send({ error: 'content is required' });
+
+  const [comment] = await Promise.all([
+    Comment.findOneAndUpdate({ _id: commentId }, { content }, { new: true }),
+    Blog.updateOne(
+      { 'comments._id': commentId },
+      { 'comments.$.content': content }
+    ),
+  ]);
+
+  return res.send({ comment });
 });
