@@ -159,3 +159,15 @@ blogRouter.patch('/:blogId/comments/:commentId', async (req, res) => {
 
   return res.send({ comment });
 });
+
+blogRouter.delete('/:blogId/comments/:commentId', async (req, res) => {
+  const { commentId } = req.params;
+  const comment = await Comment.findOneAndDelete({ _id: commentId });
+
+  await Blog.updateOne(
+    { 'comments._id': commentId },
+    { $pull: { comments: { _id: commentId } } }
+  );
+
+  return res.send({ comment });
+});

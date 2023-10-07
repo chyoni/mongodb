@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
-import { User } from '../../models';
+import { Blog, Comment, User } from '../../models';
 
 export const userRouter = Router();
 
@@ -57,7 +57,15 @@ userRouter.delete('/:userId', async (req, res) => {
     const { userId } = req.params;
     if (!mongoose.isValidObjectId(userId))
       return res.status(400).send({ error: 'Invalid user id' });
-    const deleted = await User.findOneAndDelete({ _id: userId });
+    const [deleted] = await Promise.all([
+      User.findOneAndDelete({ _id: userId }),
+      Blog.deleteMany({ 'user._id': userId }),
+      Blog.updateMany(
+        { 'comments.user': userId },
+        { $pull: { comments: { user: userId } } }
+      ),
+      Comment.deleteMany({ user: userId }),
+    ]);
 
     return res.status(200).send({ user: deleted });
   } catch (e: any) {
@@ -84,6 +92,16 @@ userRouter.put('/:userId', async (req, res) => {
     const updatedUser = await User.findOneAndUpdate({ _id: userId }, req.body, {
       new: true,
     });
+    if (updatedUser) {
+      await Blog.updateMany({ 'user._id': userId }, { user: updatedUser });
+      await Blog.updateMany(
+        { $expr: { $gte: [{ $size: '$comments' }, 1] } },
+        {
+          'comments.$[comment].userFullName': `${updatedUser.name.first} ${updatedUser.name.last}`,
+        },
+        { arrayFilters: [{ 'comment.user': userId }] }
+      );
+    }
 
     return res.status(200).send({ user: updatedUser });
   } catch (e: any) {
