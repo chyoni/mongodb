@@ -37,6 +37,7 @@ const blogSchema = new Schema<IBlog>(
   { timestamps: true }
 );
 
+blogSchema.index({ 'user._id': 1, updatedAt: 1 });
 // blogSchema.virtual('comments', {
 //   ref: 'comment',
 //   localField: '_id',

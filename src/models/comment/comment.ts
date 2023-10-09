@@ -13,7 +13,7 @@ export interface IComment {
 export const commentSchema = new Schema<IComment>(
   {
     content: { type: String, required: true },
-    user: { type: Types.ObjectId, required: true, ref: 'user' },
+    user: { type: Types.ObjectId, required: true, ref: 'user', index: true },
     userFullName: { type: String, required: true },
     blog: { type: Types.ObjectId, required: true, ref: 'blog' },
   },
