@@ -7,7 +7,13 @@ export const userRouter = Router();
 // Get users
 userRouter.get('/', async function (req, res) {
   try {
-    const users = await User.find();
+    let page = 0;
+    let { queryPage } = req.query;
+    if (queryPage) page = +queryPage;
+    const users = await User.find()
+      .sort({ updatedAt: -1 }) // -1은 역순(내림차순, 업데이트가 더 최신인 것들 먼저)
+      .skip(+page * 3)
+      .limit(10);
     return res.send({ users });
   } catch (e: any) {
     console.log(e);

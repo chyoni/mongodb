@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import { userRouter, blogRouter } from './routes';
-import { generateUser } from '../faker';
+import { generateBlogAndComment, generateUser } from '../faker';
 const app = express();
 
 const MONGO_URI =
@@ -20,7 +20,8 @@ const start = async () => {
 
     app.listen(3000, async function () {
       console.log('server listening on port 3000');
-      //await generateUser(100000);
+      // await generateUser(100000);
+      // await generateBlogAndComment(10, 7);
     });
   } catch (error) {
     console.log(error);

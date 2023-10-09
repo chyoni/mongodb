@@ -7,7 +7,14 @@ export const blogRouter = Router();
 // Get blogs
 blogRouter.get('/', async (req, res) => {
   try {
-    const blogs = await Blog.find();
+    let page = 0;
+    let { queryPage } = req.query;
+    if (queryPage) page = +queryPage;
+
+    const blogs = await Blog.find()
+      .sort({ updatedAt: -1 }) // -1은 역순(내림차순, 업데이트가 더 최신인 것들 먼저)
+      .skip(+page * 3)
+      .limit(3);
     return res.status(200).send({ blogs });
   } catch (e: any) {
     console.log(e);
@@ -98,12 +105,14 @@ blogRouter.post('/:blogId/comments', async (req, res) => {
     const { blogId } = req.params;
     if (!mongoose.isValidObjectId(blogId))
       return res.status(400).send({ error: 'Invalid blog id' });
-    const { content, userId } = req.body;
+    const { content, userId, userFullName } = req.body;
     if (!mongoose.isValidObjectId(userId))
       return res.status(400).send({ error: 'Invalid user id' });
 
     if (!content)
       return res.status(400).send({ error: 'content must be required' });
+    if (!userFullName)
+      return res.status(400).send({ error: 'userFullName must be required' });
 
     const [blog, user] = await Promise.all([
       Blog.findOne({ _id: blogId }),
@@ -115,7 +124,7 @@ blogRouter.post('/:blogId/comments', async (req, res) => {
     if (!blog.isLive)
       return res.status(400).send({ error: 'Blog is not available' });
 
-    const comment = new Comment({ content, user, blog });
+    const comment = new Comment({ content, user, blog, userFullName });
 
     await Promise.all([
       comment.save(),
