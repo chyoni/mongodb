@@ -20,8 +20,8 @@ const start = async () => {
 
     app.listen(3000, async function () {
       console.log('server listening on port 3000');
-      // await generateUser(100000);
-      // await generateBlogAndComment(10, 7);
+      // await generateUser(10);
+      // await generateBlogAndComment(10, 10);
     });
   } catch (error) {
     console.log(error);

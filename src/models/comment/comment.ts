@@ -20,5 +20,7 @@ export const commentSchema = new Schema<IComment>(
   { timestamps: true }
 );
 
+commentSchema.index({ blog: 1, createdAt: -1 });
+
 const Comment = model('comment', commentSchema);
 export default Comment;

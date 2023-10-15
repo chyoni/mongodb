@@ -7,9 +7,7 @@ export const userRouter = Router();
 // Get users
 userRouter.get('/', async function (req, res) {
   try {
-    let page = 0;
-    let { queryPage } = req.query;
-    if (queryPage) page = +queryPage;
+    let { page = 0 } = req.query;
     const users = await User.find()
       .sort({ updatedAt: -1 }) // -1은 역순(내림차순, 업데이트가 더 최신인 것들 먼저)
       .skip(+page * 3)

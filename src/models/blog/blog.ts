@@ -15,7 +15,8 @@ export interface IBlog {
   title: string;
   content: string;
   isLive: boolean;
-  comments: IComment;
+  comments: IComment[];
+  commentsCount: number;
   user: IBlogUser;
 }
 
@@ -32,12 +33,14 @@ const blogSchema = new Schema<IBlog>(
         last: { type: String, required: true },
       },
     },
+    commentsCount: { type: Number, default: 0, required: true },
     comments: [commentSchema],
   },
   { timestamps: true }
 );
 
 blogSchema.index({ 'user._id': 1, updatedAt: 1 });
+blogSchema.index({ title: 'text', content: 'text' }); // text 인덱스를 여러개 만들고 싶을 때 하는 방법 (복합 인덱스로 만들기)
 // blogSchema.virtual('comments', {
 //   ref: 'comment',
 //   localField: '_id',
